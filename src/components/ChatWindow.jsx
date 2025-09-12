@@ -31,7 +31,7 @@ function ChatWindow({ onClose }) {
   }, [messages]);
 
   return (
-    <div className="w-full h-[100vh] sm:w-[360px] sm:h-[500px] bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden">
+    <div className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 w-full h-screen sm:w-[360px] sm:h-[500px] bg-white rounded-none sm:rounded-2xl shadow-lg flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between bg-blue-500 p-3 sm:p-4 text-white font-semibold text-base sm:text-lg">
         <div className="flex items-center gap-2">
