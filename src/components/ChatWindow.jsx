@@ -13,10 +13,8 @@ function ChatWindow({ onClose }) {
   const handleSend = (message) => {
     if (!message.trim()) return;
 
-    // Add user message
     setMessages((prev) => [...prev, { text: message, sender: "user" }]);
 
-    // Mock bot reply
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -25,7 +23,6 @@ function ChatWindow({ onClose }) {
     }, 1000);
   };
 
-  // Scroll to bottom on new message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

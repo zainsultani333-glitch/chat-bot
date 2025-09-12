@@ -17,7 +17,7 @@ function ChatMessage({ text, sender }) {
 
       {/* Message bubble */}
       <div
-        className={`max-w-[70%] p-3 rounded-xl text-sm break-words ${
+        className={`max-w-[85%] sm:max-w-[70%] p-2 sm:p-3 rounded-xl text-sm sm:text-base break-words ${
           sender === "user"
             ? "bg-green-200 text-black"
             : "bg-gray-200 text-black"
