@@ -7,25 +7,53 @@ function ChatWindow({ onClose }) {
   const [messages, setMessages] = useState([
     { text: "Hello! How can I help you today?", sender: "bot" },
   ]);
+  const [isTyping, setIsTyping] = useState(false);
 
   const chatEndRef = useRef(null);
 
-  const handleSend = (message) => {
+  const handleSend = async (message) => {
     if (!message.trim()) return;
 
+    // Add user message
     setMessages((prev) => [...prev, { text: message, sender: "user" }]);
 
-    setTimeout(() => {
+    // Show typing dots
+    setIsTyping(true);
+
+    try {
+      const response = await fetch("https://chat-update-five.vercel.app/chat", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "string",
+          payload: { additionalProp1: {} },
+          message: message,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Hide typing and show bot response
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { text: "I received your message: " + message, sender: "bot" },
+        { text: data.message || "No response from bot.", sender: "bot" },
       ]);
-    }, 1000);
+    } catch (error) {
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        { text: "Error: Could not reach server.", sender: "bot" },
+      ]);
+    }
   };
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   return (
     <div className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 w-full h-screen sm:w-[360px] sm:h-[500px] bg-white rounded-none sm:rounded-2xl shadow-lg flex flex-col overflow-hidden">
@@ -45,6 +73,19 @@ function ChatWindow({ onClose }) {
         {messages.map((msg, index) => (
           <ChatMessage key={index} text={msg.text} sender={msg.sender} />
         ))}
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <div className="flex items-center space-x-2">
+            <div className="bg-blue-500 rounded-full p-1 flex-shrink-0">
+              <ChatBubbleOvalLeftIcon className="h-6 w-6 text-white" />
+            </div>
+            <div className="bg-gray-200 text-black px-3 py-2 rounded-xl text-sm sm:text-base">
+              <span className="typing-dots">...</span>
+            </div>
+          </div>
+        )}
+
         <div ref={chatEndRef}></div>
       </div>
 
