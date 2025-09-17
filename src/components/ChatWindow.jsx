@@ -24,7 +24,11 @@ function ChatWindow({ onClose }) {
     const flow = [
       {
         action: "login",
-        payload: { name: "Dr. Iklaq", phone: "03124567896", address: "cant" },
+        payload: {
+          name: "Dr. Sir Iklaq",
+          phone: "03124567896",
+          address: "cant",
+        },
       },
       { action: "list_categories", payload: {} },
       {
