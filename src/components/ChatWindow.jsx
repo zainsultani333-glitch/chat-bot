@@ -17,75 +17,35 @@ function ChatWindow({ onClose }) {
     // Add user message
     setMessages((prev) => [...prev, { text: message, sender: "user" }]);
 
-    // Show typing indicator
     setIsTyping(true);
-
-    // Define Swagger flow
-    const flow = [
-      {
-        action: "login",
-        payload: {
-          name: "Dr. Sir Iklaq",
-          phone: "03124567896",
-          address: "cant",
-        },
-      },
-      { action: "list_categories", payload: {} },
-      {
-        action: "list_items",
-        payload: { category_name: "Computer Accessories" },
-      },
-      {
-        action: "add_to_cart",
-        payload: { name: "Laptop MacPro 2017", quantity: 2, price: 85000 },
-      },
-      { action: "show_cart", payload: {} },
-      { action: "checkout", payload: { payment_method: "Cash on Delivery" } },
-      { action: "logout", payload: {} },
-    ];
+    const session_id = Date.now().toString(); // e.g., "1695151234567"
 
     try {
-      let finalResponse = null;
+      const response = await fetch("https://dep-chat-1nfn.onrender.com/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+          session_id: "1758282560201",
+        }),
+      });
 
-      // Loop through flow sequentially
-      for (const step of flow) {
-        const response = await fetch(
-          "https://fastapi-chatbot-wine.vercel.app/chat",
-          {
-            method: "POST",
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              action: step.action,
-              payload: step.payload,
-            }),
-          }
-        );
+      const data = await response.json();
+      console.log("Data", data);
 
-        const data = await response.json();
-        finalResponse = data;
-
-        // Optionally show intermediate responses
-        let botText = "";
-        if (data.categories) botText = data.categories.join(", ");
-        else if (data.items)
-          botText = data.items.map((i) => `${i.name} - ${i.price}`).join("\n");
-        else if (data.cart)
-          botText = data.cart.map((i) => `${i.name} x${i.quantity}`).join("\n");
-        else botText = data.message || "No response from bot.";
-
-        setMessages((prev) => [...prev, { text: botText, sender: "bot" }]);
-      }
-
-      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        { text: data.reply || "No response from bot.", sender: "bot" },
+      ]);
     } catch (error) {
-      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         { text: "Error: Could not reach server.", sender: "bot" },
       ]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
